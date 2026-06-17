@@ -15,7 +15,7 @@ const Auth = () => {
     const location = useLocation();
 
     //Get next url from query params
-    const next = location.search.split('next = ') [1];
+    const next = new URLSearchParams(location.search).get('next') || '/';
 
     //User access to navigate
     const navigate = useNavigate();

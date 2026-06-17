@@ -15,7 +15,7 @@ export function meta({}: Route.MetaArgs) {
 
 export default function Home() {
 
-    const { auth } = usePuterStore();
+    const { auth, isLoading } = usePuterStore();
 
     //User access to navigate
     const navigate = useNavigate();
@@ -29,12 +29,23 @@ export default function Home() {
     }, [auth.isAuthenticated])
 
 
+    /*
+    In home.tsx:25-29, the redirect-to-auth effect fires whenever auth.isAuthenticated is false —
+    which is also true during the initial loading phase before Puter finishes checking auth status.
+    Gate it on isLoading to avoid a flash redirect:
+    */
+    useEffect (() => {
+        if (!isLoading && !auth.isAuthenticated) {
+            navigate('/auth?next=/');
+        }
+    }, [auth.isAuthenticated, isLoading]);
+
     return (
         <main className="bg-[url('/images/bg-main.svg')] bg-cover">
             <Navbar/>
 
             <section className="main-section">
-                <div className="page-heading">
+                <div className="page-heading py-16">
                     <h1>Track Your Applications & Resume Ratings</h1>
                     <h2>Review your submissions and check AI-powered feedback.</h2>
                 </div>
